@@ -45,36 +45,19 @@ end
 
 local function isNPC(obj)
 	if not obj:IsA("Model") then return false end
-	local hum = obj:FindFirstChildOfClass("Humanoid")
-	if not hum then return false end
-	-- Must have a HumanoidRootPart to be a real NPC
-	if not obj:FindFirstChild("HumanoidRootPart") then return false end
+	if not obj:FindFirstChildOfClass("Humanoid") then return false end
 	for _, p in ipairs(Players:GetPlayers()) do
 		if p.Character == obj then return false end
 	end
 	return true
 end
 
-
 local function isBreakable(obj)
-	-- Skip BaseParts that are anchored terrain-like objects
-	if obj:IsA("BasePart") or obj:IsA("UnionOperation") or obj:IsA("MeshPart") then
-		-- Only tag Models, not raw parts
-		return false
-	end
-	if not obj:IsA("Model") then return false end
-
-	-- Skip very large objects (likely map geometry)
-	local ok, size = pcall(function()
-		return obj:GetExtentsSize()
-	end)
-	if ok and (size.X > 30 or size.Y > 30 or size.Z > 30) then return false end
-
 	local name = obj.Name:lower()
-	-- Tighter keyword list - removed wall/boulder/debris/wood/plank
 	local keywords = {
 		"breakable","barrel","crate","box","vase","pot","chest",
-		"glass","destructible","smash","shatter","prop"
+		"wood","plank","glass","destructible","smash","shatter",
+		"prop","debris","boulder","wall"
 	}
 	for _, k in ipairs(keywords) do
 		if name:find(k) then return true end
