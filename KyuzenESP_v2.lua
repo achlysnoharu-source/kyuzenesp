@@ -439,6 +439,7 @@ pvStroke.Parent = pickerPreview
 --   RGB SLIDERS
 -- =====================
 local sliderRGB = {r = 255, g = 75, b = 75}
+local isSyncing = false  -- blocks onColorChanged during slider sync
 
 local function makeSlider(label, trackColor, yPos)
 	local lbl = Instance.new("TextLabel")
@@ -512,6 +513,7 @@ local function getPct(track, inputX)
 end
 
 local function onColorChanged()
+	if isSyncing then return end
 	local col = Color3.fromRGB(sliderRGB.r, sliderRGB.g, sliderRGB.b)
 	pickerPreview.BackgroundColor3 = col
 	if pickerTarget == "npc" then
@@ -560,6 +562,7 @@ bindSlider(bTrack, bFill, bHandle, bVal, "b")
 
 -- Sync sliders visually to a given Color3
 local function syncSliders(col)
+	isSyncing = true
 	local r = math.round(col.R * 255)
 	local g = math.round(col.G * 255)
 	local b = math.round(col.B * 255)
@@ -568,6 +571,7 @@ local function syncSliders(col)
 	setSlider(gTrack, gFill, gHandle, gVal, g / 255)
 	setSlider(bTrack, bFill, bHandle, bVal, b / 255)
 	pickerPreview.BackgroundColor3 = col
+	isSyncing = false
 end
 
 -- =====================
